@@ -177,7 +177,7 @@ function buildResponse(type, options, callback) {
 
 /*
 Optional parameters:
-    @param extended     Use extended template. Show user information at header. e.g., extended=true. Default: false. 
+    @param extended     Use extended template. Show user information at header. e.g., extended=true. Default: false.
     @param lang         Set code language, for highlight. e.g., lang=python. Default is based in file extension. e.g., file.py returns python highlight style.
     @param locale       Set template locale, for translation. e.g., locale=en. Default: en.
     @param slice        Slice file, returning only the lines selected. e.g., slice=1:8. Default: null.
@@ -219,7 +219,7 @@ app.get('/github/gist/:id', function (req, res) {
                 repoUrl: null,
                 style: style,
                 extended: extended,
-                cdn_url: config.cdn_url || util.format('//%s/assets/styles/', req.headers.host)
+                cdn_url: config.cdn_url || util.format('//%s/gistfy/assets/styles/', req.headers.host)
             };
 
             buildResponse(type, options, function (status, content, contentType) {
@@ -237,15 +237,14 @@ app.get('/github/gist/:id', function (req, res) {
 /*
 Optional parameters:
     @param branch       Set file branch or changeset. e.g., branch=master or branch=38d25e12627b. Default: master.
-    @param extended     Use extended template. Show user information at header. e.g., extended=true. Default: false. 
+    @param extended     Use extended template. Show user information at header. e.g., extended=true. Default: false.
     @param lang         Set code language, for highlight. e.g., lang=python. Default is based in file extension. e.g., file.py returns python highlight style.
     @param locale       Set template locale, for translation. e.g., locale=en. Default: en.
     @param slice        Slice file, returning only the lines selected. e.g., slice=1:8. Default: null.
     @param style        Set template style. e.g., style=github, Default: github.
     @param type         Return type for content. e.g. type=html. Default: js.
 */
-app.get('/:host/:user/:repo/:path(*)', function (req, res) {
-
+app.get('/gistfy/:host/:user/:repo/:path(*)', function (req, res) {
     var host = req.params.host.toLowerCase(),
         path = req.params.path,
         repo = req.params.repo,
@@ -291,8 +290,9 @@ app.get('/:host/:user/:repo/:path(*)', function (req, res) {
                 repoUrl: repoUrl,
                 style: style,
                 extended: extended,
-                cdn_url: config.cdn_url || util.format('//%s/assets/styles/', req.headers.host)
+                cdn_url: config.cdn_url || util.format('//%s/gistfy/assets/styles/', req.headers.host)
             };
+            console.log(options);
 
             buildResponse(type, options, function (status, content, contentType) {
                 res.header("Access-Control-Allow-Origin", "*");
@@ -307,7 +307,7 @@ app.get('/:host/:user/:repo/:path(*)', function (req, res) {
 });
 
 if (config.no_static === false) {
-    app.use(express.static(path.resolve(__dirname, '../static')));
+    app.use('/gistfy', express.static(path.resolve(__dirname, '../static')));
 } else {
     console.log('Static file hosting disabled.');
 }
@@ -335,11 +335,15 @@ env.addGlobal('do_refcode', config.do_refcode);
 
 app.set('view engine', 'nunjucks');
 
-app.get('/', function (req, res) {
-    res.redirect('/index.html');
+app.get('/gistfy/', function (req, res) {
+    res.redirect('/gistfy/index.html');
 });
 
 app.get('/:path(index|api|usage|about).html', function (req, res) {
+    res.redirect('/gistfy/' + req.params.path + '.html');
+});
+
+app.get('/gistfy/:path(index|api|usage|about).html', function (req, res) {
     var url = req.originalUrl;
 
     res.render(req.params.path + '.html', { url: url }, function(err, html){
@@ -352,7 +356,7 @@ app.get('/:path(index|api|usage|about).html', function (req, res) {
     });
 });
 
-app.get('/examples.html', function (req, res) {
+app.get('/gistfy/examples.html', function (req, res) {
     var url = req.originalUrl;
 
     res.render('examples.html', { url: url, style: req.query.style }, function(err, html){

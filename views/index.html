@@ -5,9 +5,9 @@
 
 {% block head %}
     {% if debug %}
-    <link href="/assets/styles/hljs.css" rel="stylesheet">
+    <link href="/gistfy/assets/styles/hljs.css" rel="stylesheet">
     {% else %}
-    <link href="/assets/styles/hljs.min.css" rel="stylesheet">
+    <link href="/gistfy/assets/styles/hljs.min.css" rel="stylesheet">
     {% endif %}
 {% endblock %}
 
@@ -301,8 +301,8 @@
 
 {% block additional_js %}
     {% if debug %}
-    <script type="text/javascript" src="assets/js/app.js"></script>
+    <script type="text/javascript" src="/gistfy/assets/js/app.js"></script>
     {% else %}
-    <script type="text/javascript" src="assets/js/app.min.js"></script>
+    <script type="text/javascript" src="/gistfy/assets/js/app.min.js"></script>
     {% endif %}
 {% endblock %}
